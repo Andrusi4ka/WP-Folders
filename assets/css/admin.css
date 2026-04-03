@@ -91,6 +91,26 @@
 	color: var(--wpf-color-brand-hover);
 }
 
+.wpf-folder-link.is-drop-target {
+	color: var(--wpf-color-brand-hover);
+	text-decoration: underline !important;
+}
+
+.wpf-folder-link.is-drop-target .wpf-folder-label {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.wpf-folder-link.is-drop-target .wpf-folder-label::before {
+	content: "";
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: var(--wpf-color-brand);
+	flex: 0 0 7px;
+}
+
 .wpf-folder-icon {
 	width: 18px;
 	height: 18px;
@@ -200,7 +220,10 @@
 }
 
 .wpf-settings-page .description {
-	display: inline-block;
+	display: block;
+	margin: 8px 0 0;
+	font-size: 12px;
+	line-height: 1.5;
 }
 
 .wpf-settings-page fieldset label {
@@ -209,8 +232,56 @@
 }
 
 .wpf-settings-page fieldset .description {
-	display: block;
 	margin: 0 0 12px 24px;
+}
+
+.wpf-toggle-field {
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+	position: relative;
+	cursor: pointer;
+	user-select: none;
+}
+
+.wpf-toggle-field__input {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+	width: 1px;
+	height: 1px;
+	margin: 0;
+}
+
+.wpf-toggle-field__icon {
+	width: 66px;
+	height: 36px;
+	flex: 0 0 66px;
+	display: inline-block;
+	background-image: var(--wpf-toggle-icon-off);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+	transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.wpf-toggle-field__label {
+	color: var(--wpf-color-text-primary);
+	font-weight: 500;
+}
+
+.wpf-toggle-field:hover .wpf-toggle-field__icon {
+	filter: brightness(0.98);
+}
+
+.wpf-toggle-field__input:checked + .wpf-toggle-field__icon {
+	background-image: var(--wpf-toggle-icon-on);
+}
+
+.wpf-toggle-field__input:focus-visible + .wpf-toggle-field__icon {
+	outline: 2px solid var(--wpf-color-brand);
+	outline-offset: 3px;
+	border-radius: 999px;
 }
 
 .wpf-settings-info {
@@ -833,6 +904,10 @@ button.button.wpf-upload-select {
 
 .wpf-media-row.is-selected {
 	background: var(--wpf-color-brand-soft);
+}
+
+.wpf-media-row.is-dragging {
+	opacity: 0.55;
 }
 
 .wpf-media-row-file {

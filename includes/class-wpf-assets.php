@@ -25,10 +25,16 @@ final class WPF_Assets
 		wp_enqueue_style('wp-folders-admin', WPF_PLUGIN_URL . 'assets/css/admin.css', array(), WP_Folders_Plugin::VERSION);
 		wp_enqueue_script('wp-folders-library-view-grid', WPF_PLUGIN_URL . 'assets/js/library-view-grid.js', array('jquery'), WP_Folders_Plugin::VERSION, true);
 		wp_enqueue_script('wp-folders-library-view-list', WPF_PLUGIN_URL . 'assets/js/library-view-list.js', array('jquery'), WP_Folders_Plugin::VERSION, true);
-		wp_enqueue_script('wp-folders-library', WPF_PLUGIN_URL . 'assets/js/library.js', array('jquery', 'wp-folders-library-view-grid', 'wp-folders-library-view-list'), WP_Folders_Plugin::VERSION, true);
+		wp_enqueue_script('wp-folders-library-core', WPF_PLUGIN_URL . 'assets/js/library-core.js', array('jquery'), WP_Folders_Plugin::VERSION, true);
+		wp_enqueue_script('wp-folders-library-ui', WPF_PLUGIN_URL . 'assets/js/library-ui.js', array('jquery', 'wp-folders-library-core'), WP_Folders_Plugin::VERSION, true);
+		wp_enqueue_script('wp-folders-library-features', WPF_PLUGIN_URL . 'assets/js/library-features.js', array('jquery', 'wp-folders-library-ui', 'wp-folders-library-view-grid', 'wp-folders-library-view-list'), WP_Folders_Plugin::VERSION, true);
+		wp_enqueue_script('wp-folders-library-render', WPF_PLUGIN_URL . 'assets/js/library-render.js', array('jquery', 'wp-folders-library-features'), WP_Folders_Plugin::VERSION, true);
+		wp_enqueue_script('wp-folders-library-actions', WPF_PLUGIN_URL . 'assets/js/library-actions.js', array('jquery', 'wp-folders-library-render'), WP_Folders_Plugin::VERSION, true);
+		wp_enqueue_script('wp-folders-library-events', WPF_PLUGIN_URL . 'assets/js/library-events.js', array('jquery', 'wp-folders-library-actions'), WP_Folders_Plugin::VERSION, true);
+		wp_enqueue_script('wp-folders-library', WPF_PLUGIN_URL . 'assets/js/library.js', array('jquery', 'wp-folders-library-events'), WP_Folders_Plugin::VERSION, true);
 
 		wp_localize_script(
-			'wp-folders-library',
+			'wp-folders-library-core',
 			'wpfLibraryData',
 			array(
 				'ajaxUrl'            => admin_url('admin-ajax.php'),

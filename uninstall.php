@@ -42,4 +42,5 @@ if (! is_wp_error($terms) && ! empty($terms)) {
 delete_option('wpf_library_access_mode');
 delete_option('wpf_media_per_page');
 delete_option('wpf_grid_columns');
+delete_option('wpf_show_library_size');
 delete_transient('wpf_media_library_size');

@@ -10,12 +10,13 @@ if (! defined('ABSPATH')) {
 
 final class WP_Folders_Plugin
 {
-	const VERSION  = '5.0.2';
+	const VERSION  = '6.0.1';
 	const NONCE    = 'wpf_nonce';
 	const TAXONOMY = 'wpf_folder';
 	const OPTION_LIBRARY_ACCESS_MODE = 'wpf_library_access_mode';
 	const OPTION_MEDIA_PER_PAGE = 'wpf_media_per_page';
 	const OPTION_GRID_COLUMNS = 'wpf_grid_columns';
+	const OPTION_SHOW_LIBRARY_SIZE = 'wpf_show_library_size';
 
 	/**
 	 * Singleton instance.
@@ -567,6 +568,16 @@ final class WP_Folders_Plugin
 	public function get_grid_columns_setting()
 	{
 		return $this->settings->get_grid_columns_setting();
+	}
+
+	/**
+	 * Determine whether the media library size should be shown.
+	 *
+	 * @return bool
+	 */
+	public function should_show_media_library_size()
+	{
+		return $this->settings->should_show_media_library_size();
 	}
 
 	/**

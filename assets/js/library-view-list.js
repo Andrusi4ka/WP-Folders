@@ -70,7 +70,7 @@
 
 				$row.attr('data-id', item.id);
 				$row.attr('data-edit-url', item.editUrl || '');
-				$row.attr('draggable', 'false');
+				$row.attr('draggable', state.draggable ? 'true' : 'false');
 				$row.data('attachment', item);
 				$row.toggleClass('is-selected', isSelected);
 

@@ -60,6 +60,8 @@ final class WPF_Admin_Pages
 		if (! current_user_can('upload_files')) {
 			wp_die(esc_html($this->plugin->t('You do not have permission to manage folders.')));
 		}
+
+		$show_library_size = $this->plugin->should_show_media_library_size();
 ?>
 		<div class="wrap wpf-library-page" style="--wpf-grid-columns: <?php echo (int) $this->plugin->get_grid_columns_setting(); ?>;">
 			<h1 class="wp-heading-inline"><?php echo esc_html($this->plugin->t('Media Library')); ?></h1>
@@ -73,10 +75,12 @@ final class WPF_Admin_Pages
 						<button type="button" class="button button-secondary wpf-create-root"><?php echo esc_html($this->plugin->t('Create Folder')); ?></button>
 					</div>
 					<ul class="wpf-folder-tree"></ul>
-					<div class="wpf-library-sidebar-summary">
-						<span class="wpf-library-size-label"><?php echo esc_html($this->plugin->t('Media library size')); ?>:</span>
-						<strong class="wpf-library-size-value">0 B</strong>
-					</div>
+					<?php if ($show_library_size) : ?>
+						<div class="wpf-library-sidebar-summary">
+							<span class="wpf-library-size-label"><?php echo esc_html($this->plugin->t('Media library size')); ?>:</span>
+							<strong class="wpf-library-size-value">0 B</strong>
+						</div>
+					<?php endif; ?>
 					<div class="wpf-library-sidebar-footer">
 						<div class="wpf-library-sidebar-meta">
 							<span class="wpf-library-plugin-version">v<?php echo esc_html($this->plugin->get_plugin_version()); ?></span>
@@ -162,6 +166,7 @@ final class WPF_Admin_Pages
 		$library_access_mode = $this->plugin->get_library_access_mode();
 		$media_per_page      = $this->plugin->get_media_per_page_setting();
 		$grid_columns        = $this->plugin->get_grid_columns_setting();
+		$show_library_size   = $this->plugin->should_show_media_library_size();
 ?>
 		<div class="wrap wpf-settings-page">
 			<h1><?php echo esc_html($this->plugin->t('WP Folders')); ?></h1>
@@ -212,6 +217,21 @@ final class WPF_Admin_Pages
 									</select>
 								</label>
 								<p class="description"><?php echo esc_html($this->plugin->t('Choose how many media files should be shown in one row when using grid view on large screens.')); ?></p>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><?php echo esc_html($this->plugin->t('Media library size')); ?></th>
+							<td>
+								<label
+									for="wpf-show-library-size"
+									class="wpf-toggle-field"
+									style="--wpf-toggle-icon-on: url('<?php echo esc_url(WPF_PLUGIN_URL . 'assets/images/chek-on.svg'); ?>'); --wpf-toggle-icon-off: url('<?php echo esc_url(WPF_PLUGIN_URL . 'assets/images/chek-of.svg'); ?>');"
+								>
+									<input type="checkbox" name="wpf_show_library_size" id="wpf-show-library-size" class="wpf-toggle-field__input" value="1" <?php checked($show_library_size); ?>>
+									<span class="wpf-toggle-field__icon" aria-hidden="true"></span>
+									<span class="wpf-toggle-field__label"><?php echo esc_html($this->plugin->t('Show media library size')); ?></span>
+								</label>
+								<p class="description"><?php echo esc_html($this->plugin->t('This can be slower on large media libraries because WordPress may need to count many files.')); ?></p>
 							</td>
 						</tr>
 					</tbody>

@@ -27,6 +27,7 @@ final class WPF_Settings
 		update_option(WP_Folders_Plugin::OPTION_LIBRARY_ACCESS_MODE, $this->sanitize_library_access_mode(isset($_POST['wpf_library_access_mode']) ? wp_unslash($_POST['wpf_library_access_mode']) : 'separate_menu'));
 		update_option(WP_Folders_Plugin::OPTION_MEDIA_PER_PAGE, $this->sanitize_media_per_page(isset($_POST['wpf_media_per_page']) ? wp_unslash($_POST['wpf_media_per_page']) : 20));
 		update_option(WP_Folders_Plugin::OPTION_GRID_COLUMNS, $this->sanitize_grid_columns(isset($_POST['wpf_grid_columns']) ? wp_unslash($_POST['wpf_grid_columns']) : 8));
+		update_option(WP_Folders_Plugin::OPTION_SHOW_LIBRARY_SIZE, $this->sanitize_show_media_library_size(isset($_POST['wpf_show_library_size']) ? wp_unslash($_POST['wpf_show_library_size']) : '0'));
 
 		wp_safe_redirect(
 			add_query_arg(
@@ -66,6 +67,11 @@ final class WPF_Settings
 		return $this->sanitize_grid_columns(get_option(WP_Folders_Plugin::OPTION_GRID_COLUMNS, 8));
 	}
 
+	public function should_show_media_library_size()
+	{
+		return $this->sanitize_show_media_library_size(get_option(WP_Folders_Plugin::OPTION_SHOW_LIBRARY_SIZE, '1'));
+	}
+
 	public function sanitize_media_per_page($value)
 	{
 		$value = absint($value);
@@ -86,5 +92,10 @@ final class WPF_Settings
 		}
 
 		return $value;
+	}
+
+	public function sanitize_show_media_library_size($value)
+	{
+		return '1' === (string) $value;
 	}
 }

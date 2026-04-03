@@ -102,6 +102,8 @@ final class WPF_I18n
 		'Showing %1$s of %2$s media items' => 'Viser %1$s av %2$s mediaelementer',
 		'Load more' => 'Last inn mer',
 		'Media library size' => 'Størrelse',
+		'Show media library size' => 'Vis størrelsen på mediebiblioteket',
+		'This can be slower on large media libraries because WordPress may need to count many files.' => 'Dette kan gå tregere i store mediebibliotek fordi WordPress kan måtte telle mange filer.',
 		'Alt text' => 'Alternativ tekst',
 		'Title' => 'Tittel',
 		'Caption' => 'Bildetekst',

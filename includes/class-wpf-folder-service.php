@@ -75,6 +75,8 @@ final class WPF_Folder_Service
 
 	public function get_folder_summary()
 	{
+		$show_total_size = WP_Folders_Plugin::instance()->should_show_media_library_size();
+
 		$all_query = new WP_Query(
 			array(
 				'post_type'              => 'attachment',
@@ -105,11 +107,16 @@ final class WPF_Folder_Service
 			)
 		);
 
-		return array(
+		$summary = array(
 			'allMedia'   => (int) $all_query->found_posts,
 			'unassigned' => (int) $unassigned_query->found_posts,
-			'totalSize'  => $this->get_media_library_size(),
 		);
+
+		if ($show_total_size) {
+			$summary['totalSize'] = $this->get_media_library_size();
+		}
+
+		return $summary;
 	}
 
 	public function get_media_library_size()
