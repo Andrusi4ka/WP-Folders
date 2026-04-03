@@ -50,6 +50,7 @@
 		currentModalAttachmentId: null,
 		draggedAttachmentId: null,
 		draggedAttachmentIds: [],
+		suppressCardClickUntil: 0,
 		$dragPlaceholder: $(),
 		sortingHintTimer: null,
 		sortingHintPosition: { x: 0, y: 0 },

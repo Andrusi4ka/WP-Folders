@@ -192,6 +192,10 @@ final class WPF_Ajax_Attachments
 		}
 
 		foreach ($ids as $attachment_id) {
+			if ('attachment' !== get_post_type($attachment_id) || ! current_user_can('edit_post', $attachment_id)) {
+				wp_send_json_error(array('message' => $this->plugin->t('You do not have permission to manage folders.')), 403);
+			}
+
 			if (0 === $folder_id) {
 				wp_delete_object_term_relationships($attachment_id, WP_Folders_Plugin::TAXONOMY);
 				continue;

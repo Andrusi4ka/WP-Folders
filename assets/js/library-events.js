@@ -11,6 +11,10 @@
 		return app.state;
 	}
 
+	function suppressCardClick() {
+		state().suppressCardClickUntil = Date.now() + 250;
+	}
+
 	function handleFolderDelete($button, event) {
 		app.ajax('wpf_delete_folder', { termId: Number($button.attr('data-term-id')) }).done(function (response) {
 			if (response && response.success) {
@@ -40,10 +44,15 @@
 				return;
 			}
 
+			if (state().suppressCardClickUntil > Date.now()) {
+				event.preventDefault();
+				return;
+			}
+
 			if (!state().isSelectionMode) {
-				var editUrl = $(this).attr('data-edit-url');
-				if (editUrl) {
-					window.location.href = editUrl;
+				var item = $(this).data('attachment');
+				if (item) {
+					app.openDetailsModal(item);
 				}
 				return;
 			}
@@ -52,6 +61,7 @@
 		});
 
 		$(document).on('dragstart', '.wpf-media-card', function (event) {
+			suppressCardClick();
 			state().draggedAttachmentId = Number($(this).attr('data-id'));
 			state().draggedAttachmentIds = app.getDraggedIds(state().draggedAttachmentId);
 
@@ -96,12 +106,21 @@
 			app.placeDragPlaceholder($(this), insertBefore);
 		});
 
+		$(document).on('dragover', '.wpf-media-card--placeholder', function (event) {
+			if (state().currentViewMode !== 'grid' || state().isSelectionMode || !state().draggedAttachmentId || state().draggedAttachmentIds.length !== 1) {
+				return;
+			}
+
+			event.preventDefault();
+		});
+
 		$(document).on('drop', '.wpf-media-card, .wpf-media-card--placeholder', function (event) {
 			if (state().currentViewMode !== 'grid' || state().isSelectionMode || !state().draggedAttachmentId || state().draggedAttachmentIds.length !== 1) {
 				return;
 			}
 
 			event.preventDefault();
+			suppressCardClick();
 			var $dragged = $('.wpf-media-card[data-id="' + state().draggedAttachmentId + '"]');
 			if (state().$dragPlaceholder.length) {
 				$dragged.insertBefore(state().$dragPlaceholder);
@@ -111,6 +130,7 @@
 		});
 
 		$(document).on('dragend', '.wpf-media-card', function () {
+			suppressCardClick();
 			app.clearDragState();
 		});
 
@@ -149,6 +169,7 @@
 			}
 
 			event.preventDefault();
+			suppressCardClick();
 			app.moveAttachmentsToFolder(state().draggedAttachmentIds.slice(), folderId);
 			app.clearDragState();
 		});
