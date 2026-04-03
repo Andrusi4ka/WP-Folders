@@ -10,7 +10,7 @@ if (! defined('ABSPATH')) {
 
 final class WP_Folders_Plugin
 {
-	const VERSION  = '6.0.1';
+	const VERSION  = '6.0.2';
 	const NONCE    = 'wpf_nonce';
 	const TAXONOMY = 'wpf_folder';
 	const OPTION_LIBRARY_ACCESS_MODE = 'wpf_library_access_mode';

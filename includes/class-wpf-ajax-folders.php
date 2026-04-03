@@ -125,6 +125,10 @@ final class WPF_Ajax_Folders
 
 		$attachments = get_objects_in_term($term_id, WP_Folders_Plugin::TAXONOMY);
 		foreach ($attachments as $attachment_id) {
+			if ('attachment' !== get_post_type($attachment_id) || ! current_user_can('edit_post', $attachment_id)) {
+				wp_send_json_error(array('message' => $this->plugin->t('You do not have permission to manage folders.')), 403);
+			}
+
 			if ($parent_id > 0) {
 				wp_set_object_terms((int) $attachment_id, array($parent_id), WP_Folders_Plugin::TAXONOMY, false);
 			} else {
