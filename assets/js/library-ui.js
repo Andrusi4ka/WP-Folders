@@ -11,12 +11,24 @@
 		return app.state;
 	}
 
+	app.getPendingUploadItems = function () {
+		return state().uploadProgressItems.filter(function (item) {
+			return Number(item.loaded) < Number(item.size);
+		});
+	};
+
 	app.showUploadProcessingState = function () {
 		var elements = app.getUploadProgressElements();
+		elements.$root.addClass('is-processing');
 		elements.$title.text(wpfLibraryData.strings.filesTransferred || 'Files transferred.');
 		elements.$status.text(wpfLibraryData.strings.serverProcessingUpload || 'Server is processing uploaded files...');
 		elements.$percent.text('100%');
 		elements.$bar.css('width', '100%');
+		elements.$list.html(
+			'<div class="wpf-upload-progress__processing">' +
+				'<img class="wpf-upload-progress__processing-image" src="' + app.escapeHtml(wpfLibraryData.loadingImage || '') + '" alt="' + app.escapeHtml(wpfLibraryData.strings.loadingMedia || '') + '">' +
+			'</div>'
+		);
 	};
 
 	app.getUploadProgressElements = function () {
@@ -40,6 +52,7 @@
 		state().uploadRequestCompleted = false;
 		state().uploadProgressItems = [];
 		var elements = app.getUploadProgressElements();
+		elements.$root.removeClass('is-processing');
 		elements.$root.prop('hidden', true);
 		elements.$title.text(wpfLibraryData.strings.transferringFiles || '');
 		elements.$status.text(app.getUploadStatusText(0, 0));
@@ -52,8 +65,9 @@
 	app.renderUploadProgressList = function () {
 		var elements = app.getUploadProgressElements();
 		var html = '';
+		var items = app.getPendingUploadItems();
 
-		state().uploadProgressItems.forEach(function (item) {
+		items.forEach(function (item) {
 			var percent = item.size > 0 ? Math.min(100, Math.round((item.loaded / item.size) * 100)) : 100;
 			html += '' +
 				'<div class="wpf-upload-progress__item">' +
@@ -116,7 +130,7 @@
 
 		app.renderUploadProgressList();
 
-		if (percent >= 100 && !state().uploadRequestCompleted) {
+		if (!app.getPendingUploadItems().length && !state().uploadRequestCompleted) {
 			app.showUploadProcessingState();
 		}
 	};
@@ -135,7 +149,9 @@
 	app.failUploadProgress = function (message) {
 		state().uploadRequestCompleted = true;
 		var elements = app.getUploadProgressElements();
+		elements.$root.removeClass('is-processing');
 		elements.$title.text(message || wpfLibraryData.strings.uploadFailed || wpfLibraryData.strings.unexpected);
+		elements.$list.empty();
 		app.setUploadUiBusy(false);
 	};
 
@@ -144,7 +160,7 @@
 		app.completeUploadProgress();
 		$('.wpf-upload-dropzone').removeClass('is-dragover');
 		app.resetUploadProgress();
-		app.setUploadPanelState(false);
+		app.setUploadPanelState(!!wpfLibraryData.alwaysShowUploadPanel);
 	};
 
 	app.ensureDetailsModal = function () {

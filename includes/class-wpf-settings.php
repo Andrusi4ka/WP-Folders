@@ -28,6 +28,8 @@ final class WPF_Settings
 		update_option(WP_Folders_Plugin::OPTION_MEDIA_PER_PAGE, $this->sanitize_media_per_page(isset($_POST['wpf_media_per_page']) ? wp_unslash($_POST['wpf_media_per_page']) : 20));
 		update_option(WP_Folders_Plugin::OPTION_GRID_COLUMNS, $this->sanitize_grid_columns(isset($_POST['wpf_grid_columns']) ? wp_unslash($_POST['wpf_grid_columns']) : 8));
 		update_option(WP_Folders_Plugin::OPTION_SHOW_LIBRARY_SIZE, $this->sanitize_show_media_library_size(isset($_POST['wpf_show_library_size']) ? wp_unslash($_POST['wpf_show_library_size']) : '0'));
+		update_option(WP_Folders_Plugin::OPTION_ALWAYS_SHOW_UPLOAD_PANEL, $this->sanitize_always_show_upload_panel(isset($_POST['wpf_always_show_upload_panel']) ? wp_unslash($_POST['wpf_always_show_upload_panel']) : '0'));
+		update_option(WP_Folders_Plugin::OPTION_IMAGE_COMPRESSION_QUALITY, $this->sanitize_image_compression_quality(isset($_POST['wpf_image_compression_quality']) ? wp_unslash($_POST['wpf_image_compression_quality']) : 100));
 
 		wp_safe_redirect(
 			add_query_arg(
@@ -69,7 +71,17 @@ final class WPF_Settings
 
 	public function should_show_media_library_size()
 	{
-		return $this->sanitize_show_media_library_size(get_option(WP_Folders_Plugin::OPTION_SHOW_LIBRARY_SIZE, '1'));
+		return '1' === (string) get_option(WP_Folders_Plugin::OPTION_SHOW_LIBRARY_SIZE, '1');
+	}
+
+	public function should_always_show_upload_panel()
+	{
+		return '1' === (string) get_option(WP_Folders_Plugin::OPTION_ALWAYS_SHOW_UPLOAD_PANEL, '0');
+	}
+
+	public function get_image_compression_quality_setting()
+	{
+		return $this->sanitize_image_compression_quality(get_option(WP_Folders_Plugin::OPTION_IMAGE_COMPRESSION_QUALITY, 100));
 	}
 
 	public function sanitize_media_per_page($value)
@@ -96,6 +108,22 @@ final class WPF_Settings
 
 	public function sanitize_show_media_library_size($value)
 	{
-		return '1' === (string) $value;
+		return '1' === (string) $value ? '1' : '0';
+	}
+
+	public function sanitize_always_show_upload_panel($value)
+	{
+		return '1' === (string) $value ? '1' : '0';
+	}
+
+	public function sanitize_image_compression_quality($value)
+	{
+		$value = absint($value);
+
+		if ($value > 100) {
+			return 100;
+		}
+
+		return $value;
 	}
 }

@@ -124,7 +124,7 @@ final class WPF_Folder_Service
 		$cache_key   = 'wpf_media_library_size';
 		$cached_size = get_transient($cache_key);
 
-		if (false !== $cached_size) {
+		if (false !== $cached_size && ! $this->is_zero_size_string($cached_size)) {
 			return (string) $cached_size;
 		}
 
@@ -142,10 +142,7 @@ final class WPF_Folder_Service
 
 		$total_bytes = 0;
 		foreach ($query->posts as $attachment_id) {
-			$file = get_attached_file($attachment_id);
-			if ($file && file_exists($file)) {
-				$total_bytes += (int) filesize($file);
-			}
+			$total_bytes += $this->get_attachment_size_in_bytes((int) $attachment_id);
 		}
 
 		$formatted = size_format($total_bytes, 2);
@@ -153,4 +150,74 @@ final class WPF_Folder_Service
 
 		return $formatted;
 	}
+
+	/**
+	 * Determine the original file size for an attachment as reliably as possible.
+	 *
+	 * @param int $attachment_id Attachment ID.
+	 * @return int
+	 */
+	private function get_attachment_size_in_bytes($attachment_id)
+	{
+		$metadata = wp_get_attachment_metadata($attachment_id);
+		if (is_array($metadata) && ! empty($metadata['filesize'])) {
+			return max(0, (int) $metadata['filesize']);
+		}
+
+		$file = get_attached_file($attachment_id);
+		$size = $this->get_filesystem_size($file);
+		if ($size > 0) {
+			return $size;
+		}
+
+		$relative_path = get_post_meta($attachment_id, '_wp_attached_file', true);
+		if (! is_string($relative_path) || '' === $relative_path) {
+			return 0;
+		}
+
+		$upload_dir = wp_get_upload_dir();
+		if (empty($upload_dir['basedir']) || ! is_string($upload_dir['basedir'])) {
+			return 0;
+		}
+
+		$normalized_relative_path = ltrim(str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $relative_path), DIRECTORY_SEPARATOR);
+		$absolute_path            = trailingslashit($upload_dir['basedir']) . $normalized_relative_path;
+
+		return $this->get_filesystem_size($absolute_path);
+	}
+
+	/**
+	 * Read a file size from disk.
+	 *
+	 * @param string|false $file_path Absolute path.
+	 * @return int
+	 */
+	private function get_filesystem_size($file_path)
+	{
+		if (! is_string($file_path) || '' === $file_path || ! file_exists($file_path)) {
+			return 0;
+		}
+
+		if (function_exists('wp_filesize')) {
+			return max(0, (int) wp_filesize($file_path));
+		}
+
+		return max(0, (int) filesize($file_path));
+	}
+
+	/**
+	 * Check whether a formatted size string represents zero.
+	 *
+	 * @param mixed $value Cached formatted size.
+	 * @return bool
+	 */
+	private function is_zero_size_string($value)
+	{
+		if (! is_string($value)) {
+			return false;
+		}
+
+		return 1 === preg_match('/^\s*0(?:[.,]0+)?(?:\s|$)/', trim($value));
+	}
+
 }

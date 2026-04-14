@@ -10,13 +10,15 @@ if (! defined('ABSPATH')) {
 
 final class WP_Folders_Plugin
 {
-	const VERSION  = '6.0.2';
+	const VERSION  = '8.1.2';
 	const NONCE    = 'wpf_nonce';
 	const TAXONOMY = 'wpf_folder';
 	const OPTION_LIBRARY_ACCESS_MODE = 'wpf_library_access_mode';
 	const OPTION_MEDIA_PER_PAGE = 'wpf_media_per_page';
 	const OPTION_GRID_COLUMNS = 'wpf_grid_columns';
 	const OPTION_SHOW_LIBRARY_SIZE = 'wpf_show_library_size';
+	const OPTION_ALWAYS_SHOW_UPLOAD_PANEL = 'wpf_always_show_upload_panel';
+	const OPTION_IMAGE_COMPRESSION_QUALITY = 'wpf_image_compression_quality';
 
 	/**
 	 * Singleton instance.
@@ -578,6 +580,30 @@ final class WP_Folders_Plugin
 	public function should_show_media_library_size()
 	{
 		return $this->settings->should_show_media_library_size();
+	}
+
+	/**
+	 * Determine whether the upload panel should be shown by default.
+	 *
+	 * @return bool
+	 */
+	public function should_always_show_upload_panel()
+	{
+		return $this->settings->should_always_show_upload_panel();
+	}
+
+	public function get_image_compression_quality_setting()
+	{
+		return $this->settings->get_image_compression_quality_setting();
+	}
+
+	public function get_supported_image_optimization_mime_types()
+	{
+		return array(
+			'image/jpeg',
+			'image/png',
+			'image/webp',
+		);
 	}
 
 	/**

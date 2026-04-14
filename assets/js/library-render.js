@@ -38,6 +38,8 @@
 			allMedia: (summary || {}).allMedia || 0,
 			unassigned: (summary || {}).unassigned || 0
 		};
+		app.syncCollapsedFolders();
+		$('.wpf-library-size-value').text((summary || {}).totalSize || '0 B');
 
 		$target.empty();
 
@@ -67,20 +69,35 @@
 
 		app.renderTargetFolderSelect();
 		app.updateCurrentFolderLabel();
-		$('.wpf-library-size-value').text((summary || {}).totalSize || '0 B');
 	};
 
 	app.renderNode = function (node) {
 		var isCurrent = Number(state().currentFolder) === Number(node.id);
+		var hasChildren = !!(node.children && node.children.length);
+		var isCollapsed = hasChildren && app.isFolderCollapsed(node.id);
 		var $item = $('<li class="wpf-folder-item"></li>');
 		var $row = $('<div class="wpf-folder-row"></div>');
+		var $main = $('<div class="wpf-folder-main"></div>');
 		var $link = $('<button type="button" class="button-link wpf-folder-link"></button>');
 		var $actions = $('<div class="wpf-folder-actions"></div>');
+
+		if (hasChildren) {
+			$main.append(
+				$('<button type="button" class="button-link wpf-folder-toggle"></button>')
+					.attr('data-folder-id', node.id)
+					.attr('aria-expanded', isCollapsed ? 'false' : 'true')
+					.attr('aria-label', isCollapsed ? 'Expand folder' : 'Collapse folder')
+					.html('<img class="wpf-folder-toggle-icon" src="' + app.escapeHtml(wpfLibraryData.icons.arrow || '') + '" alt="" aria-hidden="true">')
+			);
+		} else {
+			$main.append('<span class="wpf-folder-toggle-spacer" aria-hidden="true"></span>');
+		}
 
 		$link.attr('data-folder-id', node.id);
 		$link.toggleClass('is-current', isCurrent);
 		$link.append('<img class="wpf-folder-icon" src="' + app.getFolderIcon(isCurrent) + '" alt="">');
 		$link.append('<span class="wpf-folder-label">' + app.escapeHtml(node.name + ' (' + node.count + ')') + '</span>');
+		$main.append($link);
 
 		$actions
 			.append(
@@ -106,11 +123,13 @@
 					.html('<img class="wpf-action-icon" src="' + wpfLibraryData.icons.delete + '" alt="">')
 			);
 
-		$row.append($link).append($actions);
+		$row.append($main).append($actions);
 		$item.append($row);
 
-		if (node.children && node.children.length) {
+		if (hasChildren) {
 			var $children = $('<ul class="wpf-folder-children"></ul>');
+			$item.toggleClass('is-collapsed', isCollapsed);
+			$children.prop('hidden', isCollapsed);
 			node.children.forEach(function (child) {
 				$children.append(app.renderNode(child));
 			});

@@ -11,6 +11,96 @@
 		return app.state;
 	}
 
+	app.saveCollapsedFolders = function () {
+		if (!window.localStorage) {
+			return;
+		}
+
+		window.localStorage.setItem('wpfCollapsedFolders', JSON.stringify(state().collapsedFolders));
+	};
+
+	app.isFolderCollapsed = function (folderId) {
+		return state().collapsedFolders.indexOf(Number(folderId)) !== -1;
+	};
+
+	app.setFolderCollapsed = function (folderId, isCollapsed) {
+		folderId = Number(folderId);
+
+		if (!folderId) {
+			return;
+		}
+
+		state().collapsedFolders = state().collapsedFolders.filter(function (id) {
+			return Number(id) !== folderId;
+		});
+
+		if (isCollapsed) {
+			state().collapsedFolders.push(folderId);
+		}
+
+		app.saveCollapsedFolders();
+	};
+
+	app.toggleFolderCollapsed = function (folderId) {
+		folderId = Number(folderId);
+
+		if (!folderId) {
+			return false;
+		}
+
+		var isCollapsed = !app.isFolderCollapsed(folderId);
+		app.setFolderCollapsed(folderId, isCollapsed);
+		return isCollapsed;
+	};
+
+	app.collectFolderIds = function (tree, result) {
+		result = result || [];
+
+		(tree || []).forEach(function (node) {
+			result.push(Number(node.id));
+
+			if (node.children && node.children.length) {
+				app.collectFolderIds(node.children, result);
+			}
+		});
+
+		return result;
+	};
+
+	app.findFolderPath = function (folderId, tree, path) {
+		var targetId = Number(folderId);
+		var currentPath = path || [];
+		var result = null;
+
+		(tree || []).some(function (node) {
+			var nextPath = currentPath.concat(Number(node.id));
+			if (Number(node.id) === targetId) {
+				result = nextPath;
+				return true;
+			}
+
+			if (node.children && node.children.length) {
+				result = app.findFolderPath(targetId, node.children, nextPath);
+				return !!result;
+			}
+
+			return false;
+		});
+
+		return result;
+	};
+
+	app.syncCollapsedFolders = function () {
+		var validIds = app.collectFolderIds(state().folderTree);
+		var expandedPath = app.findFolderPath(state().currentFolder, state().folderTree) || [];
+
+		state().collapsedFolders = state().collapsedFolders.filter(function (id) {
+			return validIds.indexOf(Number(id)) !== -1 && expandedPath.indexOf(Number(id)) === -1;
+		});
+
+		app.saveCollapsedFolders();
+	};
+
 	app.openDetailsModal = function (item) {
 		var $modal = app.ensureDetailsModal();
 		app.hideSortingHint();

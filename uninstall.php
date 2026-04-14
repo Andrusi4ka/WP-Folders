@@ -43,4 +43,6 @@ delete_option('wpf_library_access_mode');
 delete_option('wpf_media_per_page');
 delete_option('wpf_grid_columns');
 delete_option('wpf_show_library_size');
+delete_option('wpf_always_show_upload_panel');
+delete_option('wpf_image_compression_quality');
 delete_transient('wpf_media_library_size');

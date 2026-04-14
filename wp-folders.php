@@ -3,7 +3,7 @@
  * Plugin Name: WP Folders
  * Plugin URI: https://example.com/
  * Description: Adds virtual folders and subfolders to the WordPress Media Library without changing physical file paths.
- * Version: 6.0.2
+ * Version: 8.1.2
  * Author: Relevant AS (Andrii Boiko)
  * Author URI: https://relevant.no
  * Text Domain: wp-folders

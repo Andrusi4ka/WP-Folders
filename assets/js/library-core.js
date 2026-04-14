@@ -18,9 +18,33 @@
 		return value;
 	}
 
+	function loadCollapsedFolders() {
+		if (!window.localStorage) {
+			return [];
+		}
+
+		try {
+			var rawValue = window.localStorage.getItem('wpfCollapsedFolders');
+			var parsedValue = rawValue ? JSON.parse(rawValue) : [];
+
+			if (!Array.isArray(parsedValue)) {
+				return [];
+			}
+
+			return parsedValue.map(function (id) {
+				return Number(id);
+			}).filter(function (id) {
+				return id > 0;
+			});
+		} catch (_error) {
+			return [];
+		}
+	}
+
 	app.state = {
 		currentFolder: wpfLibraryData.currentFolder,
 		folderTree: [],
+		collapsedFolders: loadCollapsedFolders(),
 		folderSummary: {
 			allMedia: 0,
 			unassigned: 0
@@ -41,7 +65,7 @@
 			hasMore: false,
 			totalPages: 0
 		},
-		isUploadPanelOpen: false,
+		isUploadPanelOpen: !!wpfLibraryData.alwaysShowUploadPanel,
 		isSelectionMode: false,
 		lastSelectedId: null,
 		isUploadingFiles: false,

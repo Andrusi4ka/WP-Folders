@@ -154,6 +154,7 @@ final class WPF_Ajax_Attachments
 		$files    = $this->plugin->normalize_uploads_array($_FILES['files']);
 
 		foreach ($files as $file) {
+			$file = $this->optimize_uploaded_image_file($file);
 			$_FILES['wpf_single_upload'] = $file;
 			$attachment_id               = media_handle_upload('wpf_single_upload', 0);
 
@@ -177,6 +178,54 @@ final class WPF_Ajax_Attachments
 				'uploadedIds' => $uploaded,
 			)
 		);
+	}
+
+	private function optimize_uploaded_image_file($file)
+	{
+		if (! is_array($file) || empty($file['tmp_name']) || ! file_exists($file['tmp_name'])) {
+			return $file;
+		}
+
+		$mime_type = isset($file['type']) ? (string) $file['type'] : '';
+		if (! in_array($mime_type, $this->plugin->get_supported_image_optimization_mime_types(), true)) {
+			return $file;
+		}
+
+		$compression_quality = $this->plugin->get_image_compression_quality_setting();
+		$should_compress     = $compression_quality < 100;
+
+		if (! $should_compress) {
+			return $file;
+		}
+
+		$editor = wp_get_image_editor($file['tmp_name']);
+		if (is_wp_error($editor)) {
+			return $file;
+		}
+
+		$did_optimize = false;
+
+		if ($should_compress && method_exists($editor, 'set_quality')) {
+			$editor->set_quality($compression_quality);
+			$did_optimize = true;
+		}
+
+		if (! $did_optimize) {
+			return $file;
+		}
+
+		$saved = $editor->save($file['tmp_name'], $mime_type);
+		if (is_wp_error($saved)) {
+			return $file;
+		}
+
+		clearstatcache(true, $file['tmp_name']);
+
+		if (! empty($file['tmp_name']) && file_exists($file['tmp_name'])) {
+			$file['size'] = (int) filesize($file['tmp_name']);
+		}
+
+		return $file;
 	}
 
 	public function ajax_assign_folder()

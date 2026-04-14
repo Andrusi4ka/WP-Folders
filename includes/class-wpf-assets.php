@@ -43,6 +43,7 @@ final class WPF_Assets
 				'loadingImage'       => WPF_PLUGIN_URL . 'assets/images/loading.gif',
 				'sortingImage'       => WPF_PLUGIN_URL . 'assets/images/sorting.gif',
 				'icons'              => array(
+					'arrow'       => WPF_PLUGIN_URL . 'assets/images/arrow.svg',
 					'folderOpen'  => WPF_PLUGIN_URL . 'assets/images/folder-open.svg',
 					'folderClose' => WPF_PLUGIN_URL . 'assets/images/folder-close.svg',
 					'folderNew'   => WPF_PLUGIN_URL . 'assets/images/folder-new.svg',
@@ -52,6 +53,7 @@ final class WPF_Assets
 				'strings'            => $this->get_js_strings(),
 				'defaultPerPage'     => $this->plugin->get_media_per_page_setting(),
 				'defaultGridColumns' => $this->plugin->get_grid_columns_setting(),
+				'alwaysShowUploadPanel' => $this->plugin->should_always_show_upload_panel(),
 			)
 		);
 	}
@@ -162,6 +164,9 @@ final class WPF_Assets
 			'applyLabel'             => $this->plugin->t('Apply'),
 			'itemsLabel'             => $this->plugin->t('items'),
 			'ofLabel'                => $this->plugin->t('of'),
+			'uploadPanelLabel'       => $this->plugin->t('Upload panel'),
+			'alwaysShowUploadPanel'  => $this->plugin->t('Always show upload panel'),
+			'uploadPanelHelp'        => $this->plugin->t('Show the upload panel by default when opening the WP Folders media library. The Upload files button will still work as a toggle.'),
 		);
 	}
 }

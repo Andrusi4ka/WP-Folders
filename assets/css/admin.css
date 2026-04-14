@@ -74,6 +74,49 @@
 	margin-bottom: 10px;
 }
 
+.wpf-folder-main {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+	min-width: 0;
+	flex: 1 1 auto;
+}
+
+.wpf-folder-toggle,
+.wpf-folder-toggle-spacer {
+	width: 18px;
+	height: 18px;
+	flex: 0 0 18px;
+}
+
+.wpf-folder-toggle {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: var(--wpf-color-text-muted);
+	cursor: pointer;
+}
+
+.wpf-folder-toggle:hover,
+.wpf-folder-toggle:focus {
+	color: var(--wpf-color-text-primary);
+	outline: none;
+}
+
+.wpf-folder-toggle-icon {
+	display: block;
+	width: 12px;
+	height: 12px;
+	transition: transform 0.15s ease;
+}
+
+.wpf-folder-item.is-collapsed > .wpf-folder-row .wpf-folder-toggle-icon {
+	transform: rotate(-90deg);
+}
+
 .wpf-folder-link {
 	color: var(--wpf-color-text-primary);
 	text-decoration: none !important;
@@ -81,6 +124,7 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
+	min-width: 0;
 }
 
 .wpf-folder-link:hover {
@@ -226,6 +270,101 @@
 	line-height: 1.5;
 }
 
+.wpf-settings-help-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.wpf-settings-range-control {
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+	width: min(100%, 420px);
+	margin-top: 8px;
+}
+
+.wpf-settings-range-control input[type="range"] {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.wpf-settings-range-value {
+	min-width: 56px;
+	text-align: right;
+}
+
+.wpf-settings-help {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+}
+
+.wpf-settings-help__trigger {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	line-height: 1;
+	cursor: help;
+}
+
+.wpf-settings-help__trigger img {
+	display: block;
+	width: 14px;
+	height: 14px;
+	opacity: 0.8;
+}
+
+.wpf-settings-help__trigger:hover img,
+.wpf-settings-help__trigger:focus img {
+	opacity: 1;
+}
+
+.wpf-settings-help__trigger:focus {
+	outline: none;
+}
+
+.wpf-settings-help__tooltip {
+	position: absolute;
+	left: 50%;
+	bottom: calc(100% + 10px);
+	z-index: 10;
+	width: 280px;
+	padding: 10px 12px;
+	border-radius: 8px;
+	background: #1d2327;
+	color: #fff;
+	font-size: 12px;
+	line-height: 1.45;
+	box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+	transform: translateX(-50%);
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+	transition: opacity 0.15s ease;
+}
+
+.wpf-settings-help__tooltip::before {
+	content: "";
+	position: absolute;
+	left: 50%;
+	top: calc(100% - 5px);
+	width: 10px;
+	height: 10px;
+	background: #1d2327;
+	transform: translateX(-50%) rotate(45deg);
+}
+
+.wpf-settings-help:hover .wpf-settings-help__tooltip,
+.wpf-settings-help:focus-within .wpf-settings-help__tooltip {
+	opacity: 1;
+	visibility: visible;
+}
+
 .wpf-settings-page fieldset label {
 	display: block;
 	margin-bottom: 4px;
@@ -233,55 +372,6 @@
 
 .wpf-settings-page fieldset .description {
 	margin: 0 0 12px 24px;
-}
-
-.wpf-toggle-field {
-	display: inline-flex;
-	align-items: center;
-	gap: 12px;
-	position: relative;
-	cursor: pointer;
-	user-select: none;
-}
-
-.wpf-toggle-field__input {
-	position: absolute;
-	opacity: 0;
-	pointer-events: none;
-	width: 1px;
-	height: 1px;
-	margin: 0;
-}
-
-.wpf-toggle-field__icon {
-	width: 66px;
-	height: 36px;
-	flex: 0 0 66px;
-	display: inline-block;
-	background-image: var(--wpf-toggle-icon-off);
-	background-repeat: no-repeat;
-	background-position: center;
-	background-size: contain;
-	transition: transform 0.18s ease, filter 0.18s ease;
-}
-
-.wpf-toggle-field__label {
-	color: var(--wpf-color-text-primary);
-	font-weight: 500;
-}
-
-.wpf-toggle-field:hover .wpf-toggle-field__icon {
-	filter: brightness(0.98);
-}
-
-.wpf-toggle-field__input:checked + .wpf-toggle-field__icon {
-	background-image: var(--wpf-toggle-icon-on);
-}
-
-.wpf-toggle-field__input:focus-visible + .wpf-toggle-field__icon {
-	outline: 2px solid var(--wpf-color-brand);
-	outline-offset: 3px;
-	border-radius: 999px;
 }
 
 .wpf-settings-info {
@@ -438,6 +528,11 @@ button.button.wpf-upload-select {
 	background: var(--wpf-color-white);
 }
 
+.wpf-upload-progress.is-processing .wpf-upload-progress__percent,
+.wpf-upload-progress.is-processing .wpf-upload-progress__bar {
+	display: none;
+}
+
 .wpf-upload-progress__summary-head,
 .wpf-upload-progress__item-head {
 	display: flex;
@@ -502,6 +597,21 @@ button.button.wpf-upload-select {
 	flex-direction: column;
 	gap: 10px;
 	margin-top: 14px;
+}
+
+.wpf-upload-progress__processing {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 120px;
+	padding: 8px 0;
+}
+
+.wpf-upload-progress__processing-image {
+	display: block;
+	width: 132px;
+	height: 132px;
+	object-fit: contain;
 }
 
 .wpf-upload-progress__item-name {

@@ -367,10 +367,10 @@
 		}).done(function (response) {
 			if (response && response.success) {
 				app.finalizeSuccessfulUpload();
+				app.clearSelection();
+				app.resetAttachmentState();
+				app.fetchFolders(app.fetchAttachments);
 				app.notify(response.data.message || wpfLibraryData.strings.uploadCompleted, 'success');
-				window.setTimeout(function () {
-					window.location.reload();
-				}, 300);
 				return;
 			}
 

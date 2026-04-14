@@ -39,6 +39,25 @@
 			app.fetchFolders(app.fetchAttachments);
 		});
 
+		$(document).on('click', '.wpf-folder-toggle', function (event) {
+			var $button = $(this);
+			var folderId = Number($button.attr('data-folder-id'));
+			var isCollapsed;
+
+			event.preventDefault();
+			event.stopPropagation();
+
+			if (!folderId) {
+				return;
+			}
+
+			isCollapsed = app.toggleFolderCollapsed(folderId);
+			$button.attr('aria-expanded', isCollapsed ? 'false' : 'true');
+			$button.attr('aria-label', isCollapsed ? 'Expand folder' : 'Collapse folder');
+			$button.closest('.wpf-folder-item').toggleClass('is-collapsed', isCollapsed)
+				.children('.wpf-folder-children').prop('hidden', isCollapsed);
+		});
+
 		$(document).on('click', '.wpf-media-card', function (event) {
 			if (state().currentViewMode === 'list') {
 				return;
@@ -579,6 +598,7 @@
 
 	app.init = function () {
 		app.bindEvents();
+		app.setUploadPanelState(!!state().isUploadPanelOpen);
 		app.setSelectionMode(false);
 		app.updateViewModeUi();
 		app.updateSelectedCount();

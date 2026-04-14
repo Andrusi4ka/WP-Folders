@@ -62,6 +62,7 @@ final class WPF_Admin_Pages
 		}
 
 		$show_library_size = $this->plugin->should_show_media_library_size();
+		$always_show_upload_panel = $this->plugin->should_always_show_upload_panel();
 ?>
 		<div class="wrap wpf-library-page" style="--wpf-grid-columns: <?php echo (int) $this->plugin->get_grid_columns_setting(); ?>;">
 			<h1 class="wp-heading-inline"><?php echo esc_html($this->plugin->t('Media Library')); ?></h1>
@@ -91,7 +92,7 @@ final class WPF_Admin_Pages
 					</div>
 				</aside>
 				<section class="wpf-library-main">
-					<div id="wpf-upload-panel" class="wpf-upload-panel" hidden>
+					<div id="wpf-upload-panel" class="wpf-upload-panel"<?php echo $always_show_upload_panel ? '' : ' hidden'; ?>>
 						<button type="button" class="wpf-upload-panel-close" aria-label="<?php echo esc_attr($this->plugin->t('Close')); ?>">&#10005;</button>
 						<div class="wpf-upload-dropzone" tabindex="0">
 							<p class="wpf-upload-panel-title"><?php echo esc_html($this->plugin->t('Drag files here to upload')); ?></p>
@@ -167,6 +168,8 @@ final class WPF_Admin_Pages
 		$media_per_page      = $this->plugin->get_media_per_page_setting();
 		$grid_columns        = $this->plugin->get_grid_columns_setting();
 		$show_library_size   = $this->plugin->should_show_media_library_size();
+		$always_show_upload_panel = $this->plugin->should_always_show_upload_panel();
+		$image_compression_quality = $this->plugin->get_image_compression_quality_setting();
 ?>
 		<div class="wrap wpf-settings-page">
 			<h1><?php echo esc_html($this->plugin->t('WP Folders')); ?></h1>
@@ -222,16 +225,54 @@ final class WPF_Admin_Pages
 						<tr>
 							<th scope="row"><?php echo esc_html($this->plugin->t('Media library size')); ?></th>
 							<td>
-								<label
-									for="wpf-show-library-size"
-									class="wpf-toggle-field"
-									style="--wpf-toggle-icon-on: url('<?php echo esc_url(WPF_PLUGIN_URL . 'assets/images/chek-on.svg'); ?>'); --wpf-toggle-icon-off: url('<?php echo esc_url(WPF_PLUGIN_URL . 'assets/images/chek-of.svg'); ?>');"
-								>
-									<input type="checkbox" name="wpf_show_library_size" id="wpf-show-library-size" class="wpf-toggle-field__input" value="1" <?php checked($show_library_size); ?>>
-									<span class="wpf-toggle-field__icon" aria-hidden="true"></span>
-									<span class="wpf-toggle-field__label"><?php echo esc_html($this->plugin->t('Show media library size')); ?></span>
+								<label for="wpf-show-library-size">
+									<input type="checkbox" name="wpf_show_library_size" id="wpf-show-library-size" value="1" <?php checked($show_library_size); ?>>
+									<?php echo esc_html($this->plugin->t('Show media library size')); ?>
 								</label>
 								<p class="description"><?php echo esc_html($this->plugin->t('This can be slower on large media libraries because WordPress may need to count many files.')); ?></p>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><?php echo esc_html($this->plugin->t('Upload panel')); ?></th>
+							<td>
+								<label for="wpf-always-show-upload-panel">
+									<input type="checkbox" name="wpf_always_show_upload_panel" id="wpf-always-show-upload-panel" value="1" <?php checked($always_show_upload_panel); ?>>
+									<?php echo esc_html($this->plugin->t('Always show upload panel')); ?>
+								</label>
+								<p class="description"><?php echo esc_html($this->plugin->t('Show the upload panel by default when opening the WP Folders media library. The Upload files button will still work as a toggle.')); ?></p>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><?php echo esc_html($this->plugin->t('Compress images')); ?></th>
+							<td>
+								<div class="wpf-settings-help-row">
+									<div class="wpf-settings-range-control">
+										<input
+											type="range"
+											name="wpf_image_compression_quality"
+											id="wpf-image-compression-quality"
+											min="0"
+											max="100"
+											step="1"
+											value="<?php echo (int) $image_compression_quality; ?>"
+											oninput="document.getElementById('wpf-image-compression-quality-value').textContent = this.value + '%';"
+										>
+										<strong id="wpf-image-compression-quality-value" class="wpf-settings-range-value"><?php echo (int) $image_compression_quality; ?>%</strong>
+									</div>
+									<span class="wpf-settings-help">
+										<button
+											type="button"
+											class="button-link wpf-settings-help__trigger"
+											aria-label="<?php echo esc_attr($this->plugin->t('JPEG, PNG, and WebP originals are compressed during upload. GIF, SVG, AVIF, PDF, and other formats are skipped. If the value is 100%, compression is disabled.')); ?>"
+										>
+											<img src="<?php echo esc_url(WPF_PLUGIN_URL . 'assets/images/info.svg'); ?>" alt="" aria-hidden="true" />
+										</button>
+										<span class="wpf-settings-help__tooltip" role="tooltip">
+											<?php echo esc_html($this->plugin->t('JPEG, PNG, and WebP originals are compressed during upload. GIF, SVG, AVIF, PDF, and other formats are skipped. If the value is 100%, compression is disabled.')); ?>
+										</span>
+									</span>
+								</div>
+								<p class="description"><?php echo esc_html($this->plugin->t('A lower percentage means stronger compression for supported image formats.')); ?></p>
 							</td>
 						</tr>
 					</tbody>
